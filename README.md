@@ -1,4 +1,10 @@
-# Getting Started with Create React App
+# Places Web App
+
+## Libraries Used
+
+- React
+- Material UI: https://mui.com/
+- Lodash: https://lodash.com/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
