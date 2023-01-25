@@ -16,6 +16,11 @@ const StyledCard = styled(Card)`
   min-width: 400px;
 `;
 
+const PhoneNumbersContainer = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+`;
+
 interface IPlaceProps {
   place: Place;
 }
@@ -25,15 +30,25 @@ const Place: React.FC<IPlaceProps> = ({ place }) => {
 
   const toggleExpanded = () => setExpanded((prev) => !prev);
 
+  const phoneNumbers = place.addresses?.[0]?.contacts
+    ?.filter((contact) => contact.contact_type === 'phone')
+    .map((contact) => contact.formatted_service_code);
+
   return (
     <StyledCard>
       <CardActionArea onClick={toggleExpanded}>
         <CardContent>
           <Typography variant="h5">{place.name}</Typography>
 
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="subtitle1" color="text.secondary">
             {place.address}
           </Typography>
+
+          <PhoneNumbersContainer>
+            {phoneNumbers.map((phoneNumber) => (
+              <Typography variant="body2">{phoneNumber}</Typography>
+            ))}
+          </PhoneNumbersContainer>
         </CardContent>
 
         <Collapse in={expanded} timeout="auto">

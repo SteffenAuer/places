@@ -21,6 +21,7 @@ export async function getPlaceById(id: string): Promise<Place | null> {
       name: response.displayed_what,
       address: response.displayed_where,
       openingHours: { days },
+      addresses: response.addresses,
     };
 
     return place;

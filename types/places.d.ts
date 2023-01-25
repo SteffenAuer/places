@@ -15,6 +15,19 @@ declare interface OpeningHours {
 
 type OpenType = 'Open' | 'CLOSED';
 
+type Address = {
+  contacts: {
+    _class: string;
+    contact_type: 'url' | 'phone';
+    service_code: string;
+    formatted_service_code: string;
+    preferred: booolean;
+    url?: string;
+    phone_number?: string;
+    id: string;
+  }[];
+};
+
 declare interface ApiPlace {
   displayed_what: string;
   displayed_where: string;
@@ -33,15 +46,17 @@ declare interface ApiPlace {
     closed_on_holidays: boolean;
     open_by_arrangement: boolean;
   };
+  addresses: Address[];
 }
 
 declare interface Place {
   id: string;
-  name: string;
-  address: string;
+  name: ApiPlace['displayed_what'];
+  address: ApiPlace['displayed_where'];
   openingHours: {
     days: {
       [key in keyof typeof Day]: OpeningHours[];
     };
   };
+  addresses: ApiPlace['addresses'];
 }
