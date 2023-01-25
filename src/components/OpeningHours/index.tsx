@@ -39,28 +39,29 @@ const DayTimesContainer = styled.div`
 
 const OpeningHours: React.FC<IOpeningHoursProps> = ({ place }) => {
   const openingHours: OpeningHoursWeek[] = useMemo(() => {
-    const hours: OpeningHoursWeek[] = [];
+    const openingHoursDays: OpeningHoursWeek[] = [];
 
     for (let day = 0; day < dayOrders.length; day++) {
       const placeOpeningHours: OpeningHours[] | undefined =
         place.openingHours.days?.[dayOrders[day]];
 
-      const hoursToAppend = hours.find(({ hours, endDay }) => {
+      const daysToAppend = openingHoursDays.find(({ hours, endDay }) => {
         return (
           endDay === day - 1 &&
-          hours.length > 0 &&
-          hours.every(
-            (openingHours, i) =>
-              placeOpeningHours?.[i]?.start === openingHours.start &&
-              placeOpeningHours?.[i]?.end === openingHours.end
+          hours.length === (placeOpeningHours?.length ?? 0) &&
+          hours.every((openingHours) =>
+            placeOpeningHours.some(
+              ({ start, end }) =>
+                start === openingHours.start && end === openingHours.end
+            )
           )
         );
       });
 
-      if (hoursToAppend) {
-        hoursToAppend.endDay++;
+      if (daysToAppend) {
+        daysToAppend.endDay++;
       } else {
-        hours.push({
+        openingHoursDays.push({
           startDay: day,
           endDay: day,
           hours: placeOpeningHours ?? [],
@@ -68,7 +69,7 @@ const OpeningHours: React.FC<IOpeningHoursProps> = ({ place }) => {
       }
     }
 
-    return hours;
+    return openingHoursDays;
   }, [place.openingHours.days]);
 
   return (
