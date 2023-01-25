@@ -81,7 +81,9 @@ const Place: React.FC<IPlaceProps> = ({ place }) => {
 
           <PhoneNumbersContainer>
             {phoneNumbers.map((phoneNumber) => (
-              <Typography variant="body1">{phoneNumber}</Typography>
+              <Typography variant="body1" key={phoneNumber}>
+                {phoneNumber}
+              </Typography>
             ))}
           </PhoneNumbersContainer>
 

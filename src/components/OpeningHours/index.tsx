@@ -74,9 +74,9 @@ const OpeningHours: React.FC<IOpeningHoursProps> = ({ place }) => {
 
   return (
     <>
-      {openingHours.map(({ startDay, endDay, hours }) => (
-        <DayOpeningHoursContainer>
-          <Typography variant="body1" key={startDay + endDay}>
+      {openingHours.map(({ startDay, endDay, hours }, index) => (
+        <DayOpeningHoursContainer key={startDay + endDay + index}>
+          <Typography variant="body1">
             {Array.from(new Set([startDay, endDay]))
               .map((day) => startCase(dayOrders[day]))
               .join(' – ')}
@@ -88,8 +88,8 @@ const OpeningHours: React.FC<IOpeningHoursProps> = ({ place }) => {
                 Closed
               </Typography>
             ) : (
-              hours.map((opening) => (
-                <Typography key={startDay + endDay} variant="body1">
+              hours.map((opening, index) => (
+                <Typography key={startDay + endDay + index} variant="body1">
                   {opening.start} – {opening.end}
                 </Typography>
               ))
