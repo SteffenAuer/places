@@ -11,7 +11,12 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import {
+  dayOrders,
+  getIsNextOpeningHours,
+  getIsOpen,
+} from '../../utilities/days';
 import OpeningHours from '../OpeningHours';
 
 const StyledCard = styled(Card)`
@@ -36,6 +41,13 @@ const ExpandMoreButton = styled(IconButton)<{ expanded: boolean }>`
     expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
 `;
 
+const HeaderContainer = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+`;
+
 interface IPlaceProps {
   place: Place;
 }
@@ -53,10 +65,67 @@ const Place: React.FC<IPlaceProps> = ({ place }) => {
     (contact) => contact.contact_type === 'url'
   )?.[0];
 
+  const [isOpen, openString] = useMemo(() => {
+    // const date = new Date(2023, 0, 30, 14, 35);
+    const date = new Date();
+    const currentDay = date.getDay();
+
+    const currentDayStr = dayOrders?.[(currentDay + 6) % 7] ?? 'monday';
+
+    const openingHours = place.openingHours.days[currentDayStr];
+
+    const isOpenHours = openingHours?.find((openingHour) =>
+      getIsOpen(date, openingHour.start, openingHour.end)
+    );
+
+    console.log(isOpenHours);
+
+    let openString = '';
+    if (!!isOpenHours) {
+      openString = `Closes at ${isOpenHours.end}`;
+    } else {
+      let nextOpeningHours,
+        dayCounter = 0;
+
+      nextOpeningHours = openingHours?.find((currentDayOpeningHours) =>
+        getIsNextOpeningHours(date, currentDayOpeningHours.start)
+      );
+
+      if (!nextOpeningHours) {
+        for (let i = 0; i < 6; i++) {
+          const nextDayStr = dayOrders?.[(currentDay + i + 1) % 7] ?? 'monday';
+          nextOpeningHours = place.openingHours.days[nextDayStr]?.[0];
+
+          if (nextOpeningHours) {
+            dayCounter = i + 1;
+            break;
+          }
+        }
+      }
+
+      if (!nextOpeningHours) {
+        openString = 'Permanently Closed';
+      } else {
+        const dayString =
+          dayCounter > 0
+            ? `in ${dayCounter} day${dayCounter === 1 ? '' : 's'}`
+            : '';
+        openString = `Opens ${dayString} at ${nextOpeningHours.start}`;
+      }
+    }
+
+    return [!!isOpenHours, openString];
+  }, [place.openingHours]);
+
   return (
     <StyledCard>
       <CardContent>
-        <Typography variant="h5">{place.name}</Typography>
+        <HeaderContainer>
+          <Typography variant="h5">{place.name}</Typography>
+          <Typography variant="body1" color={isOpen ? 'green' : 'red'}>
+            {openString}
+          </Typography>
+        </HeaderContainer>
 
         <Typography variant="subtitle1" color="text.secondary">
           {place.address}

@@ -3,6 +3,7 @@ import { Typography } from '@mui/material';
 
 import startCase from 'lodash/startCase';
 import { useMemo } from 'react';
+import { dayOrders } from '../../utilities/days';
 
 export interface OpeningHoursWeek {
   startDay: number;
@@ -13,16 +14,6 @@ export interface OpeningHoursWeek {
 interface IOpeningHoursProps {
   place: Place;
 }
-
-const dayOrders: (keyof typeof Day)[] = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-];
 
 const DayOpeningHoursContainer = styled.div`
   display: flex;
